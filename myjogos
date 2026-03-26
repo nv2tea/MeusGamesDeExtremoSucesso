@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Meu Organizador de Jogos</title>
+    <style>
+        /* CSS: Estilo e Visual */
+        body { font-family: sans-serif; background-color: #f4f4f9; padding: 20px; }
+        h1 { color: #333; text-align: center; }
+        .container { max-width: 1000px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #007bff; color: white; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+
+        select { padding: 5px; border-radius: 4px; border: 1px solid #ccc; }
+        .data-info { font-size: 0.85em; color: #666; display: block; margin-top: 4px; }
+        
+        .status-jogando { background-color: #fff3cd !important; }
+        .status-zerado { background-color: #d4edda !important; }
+        .status-espera { background-color: #f8f9fa !important; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🎮 Minha Coleção de Jogos de Extremo Sucesso</h1>
+    
+    <table id="tabelaJogos">
+        <thead>
+            <tr>
+                <th>Nome do Jogo</th>
+                <th>Adquirido em</th>
+                <th>Status</th>
+                <th>Linha do Tempo</th>
+            </tr>
+        </thead>
+        <tbody id="corpoTabela">
+            </tbody>
+    </table>
+</div>
+
+<script>
+    // 1. DADOS DOS JOGOS (AQUI ENTRA A TUA LISTA DO EXCEL)
+    // Podes copiar as colunas do Excel e formatar assim:
+    const listaOriginal = [
+        { nome: "Electrician Simulator", adquirido: "20 de mar. de 2026" },
+{ nome: "My Night Job", adquirido: "1 de mar. de 2026" },
+{ nome: "Boxes: Lost Fragments", adquirido: "1 de mar. de 2026" },
+{ nome: "STALCRAFT: X Starter Edition", adquirido: "20 de fev. de 2026" },
+{ nome: "Return to Ash", adquirido: "20 de fev. de 2026" },
+{ nome: "The Darkside Detective A Fumble in the Dark", adquirido: "18 de fev. de 2026" },
+{ nome: "Nobody Wants to Die", adquirido: "18 de fev. de 2026" },
+{ nome: "Definitely Not Fried Chicken", adquirido: "2 de fev. de 2026" },
+{ nome: "Rustler - Grand Theft Horse", adquirido: "24 de jan. de 2026" },
+{ nome: "Styx: Shards of Darkness - Deluxe Edition", adquirido: "16 de jan. de 2026" },
+{ nome: "Styx: Master of Shadows", adquirido: "16 de jan. de 2026" },
+{ nome: "Bloons TD 6", adquirido: "8 de jan. de 2026" },
+{ nome: "Wildgate - Edição Padrão", adquirido: "1 de jan. de 2026" },
+{ nome: "Total War: THREE KINGDOMS", adquirido: "1 de jan. de 2026" },
+{ nome: "Trine Classic Collection", adquirido: "31 de dez. de 2025" },
+{ nome: "Viewfinder", adquirido: "29 de dez. de 2025" },
+{ nome: "SKALD Against the Black Priory", adquirido: "28 de dez. de 2025" },
+{ nome: "Cassette Beasts", adquirido: "27 de dez. de 2025" },
+{ nome: "We Were Here Together", adquirido: "26 de dez. de 2025" },
+{ nome: "Disco Elysium - The Final Cut", adquirido: "25 de dez. de 2025" },
+{ nome: "Bloodstained: Ritual of the Night", adquirido: "24 de dez. de 2025" },
+{ nome: "Sorry We're Closed", adquirido: "21 de dez. de 2025" },
+{ nome: "Eternights", adquirido: "19 de dez. de 2025" },
+{ nome: "Hogwarts Legacy", adquirido: "12 de dez. de 2025" },
+{ nome: "The Jackbox Party Pack 4", adquirido: "5 de dez. de 2025" },
+{ nome: "Zenless Zone Zero", adquirido: "27 de nov. de 2025" },
+{ nome: "Universe for Sale", adquirido: "27 de nov. de 2025" },
+{ nome: "Godzilla Voxel Wars", adquirido: "20 de nov. de 2025" },
+{ nome: "Zoeti", adquirido: "20 de nov. de 2025" },
+{ nome: "Songs of Silence", adquirido: "15 de nov. de 2025" },
+{ nome: "ScourgeBringer", adquirido: "15 de nov. de 2025" },
+{ nome: "Pacote do Bandido Iniciante", adquirido: "12 de out. de 2025" },
+{ nome: "Albion Online", adquirido: "12 de out. de 2025" },
+{ nome: "Gravity Circuit", adquirido: "12 de out. de 2025" },
+{ nome: "Samorost 2", adquirido: "21 de set. de 2025" },
+{ nome: "Project Winter", adquirido: "21 de set. de 2025" },
+{ nome: "Make Way", adquirido: "29 de ago. de 2025" },
+{ nome: "Machinarium", adquirido: "29 de ago. de 2025" },
+{ nome: "Totally Reliable Delivery Service Edição Standard", adquirido: "16 de ago. de 2025" },
+{ nome: "Hidden Folks", adquirido: "16 de ago. de 2025" },
+{ nome: "Road Redemption", adquirido: "8 de ago. de 2025" },
+{ nome: "112 Operator", adquirido: "8 de ago. de 2025" },
+{ nome: "Total War: WARHAMMER II - Alith Anar", adquirido: "4 de ago. de 2025" },
+{ nome: "Total War: WARHAMMER II - Repanse de Lyonesse", adquirido: "4 de ago. de 2025" },
+{ nome: "Total War: WARHAMMER II - Steps of Isha", adquirido: "4 de ago. de 2025" },
+{ nome: "Total War: WARHAMMER II - Lokhir Fellheart", adquirido: "4 de ago. de 2025" },
+{ nome: "Total War: WARHAMMER II - Thorek", adquirido: "4 de ago. de 2025" },
+{ nome: "Total War: WARHAMMER II - Mortal Empires", adquirido: "4 de ago. de 2025" },
+{ nome: "Total War: WARHAMMER II - Tiktaq'to", adquirido: "4 de ago. de 2025" },
+{ nome: "Total War: WARHAMMER II - Skaven Chieftain", adquirido: "4 de ago. de 2025" },
+{ nome: "Total War: WARHAMMER II - Rakarth", adquirido: "4 de ago. de 2025" },
+{ nome: "Total War: WARHAMMER II - Gor-Rok", adquirido: "4 de ago. de 2025" },
+{ nome: "Total War: WARHAMMER II - Imrik", adquirido: "4 de ago. de 2025" },
+{ nome: "Total War: WARHAMMER II - Tretch Craventail", adquirido: "4 de ago. de 2025" },
+{ nome: "Pilgrims", adquirido: "4 de ago. de 2025" },
+{ nome: "Keylocker | Turn Based Cyberpunk Action", adquirido: "4 de ago. de 2025" },
+{ nome: "Sid Meier's Civilization® VI: Edição Platina", adquirido: "17 de jul. de 2025" },
+{ nome: "Sky Racket", adquirido: "12 de jul. de 2025" },
+{ nome: "Figment 2: Creed Valley", adquirido: "12 de jul. de 2025" },
+{ nome: "Figment", adquirido: "6 de jul. de 2025" },
+{ nome: "Backpack Hero", adquirido: "6 de jul. de 2025" },
+{ nome: "Sable", adquirido: "26 de jun. de 2025" },
+{ nome: "Undying", adquirido: "2 de fev. de 2025" },
+{ nome: "Behind the Frame: The Finest Scenery", adquirido: "26 de jan. de 2025" },
+{ nome: "Turmoil", adquirido: "13 de jan. de 2025" },
+{ nome: "Hell Let Loose", adquirido: "2 de jan. de 2025" },
+{ nome: "Sifu", adquirido: "31 de dez. de 2024" },
+{ nome: "[REDACTED]", adquirido: "30 de dez. de 2024" },
+{ nome: "DREDGE", adquirido: "24 de dez. de 2024" },
+{ nome: "TerraTech", adquirido: "22 de dez. de 2024" },
+{ nome: "The Lord of the Rings: Return to Moria™ Pacote de DLC Yule-tide", adquirido: "12 de dez. de 2024" },
+{ nome: "The Lord of the Rings: Return to Moria", adquirido: "12 de dez. de 2024" },
+{ nome: "Bus Simulator 21 Next Stop", adquirido: "6 de dez. de 2024" },
+{ nome: "LEGO® Star Wars™: The Skywalker Saga", adquirido: "6 de dez. de 2024" },
+{ nome: "Brotato", adquirido: "30 de nov. de 2024" },
+{ nome: "Castlevania Anniversary Collection", adquirido: "14 de nov. de 2024" },
+{ nome: "Ghostwire: Tokyo", adquirido: "31 de out. de 2024" },
+{ nome: "Witch It", adquirido: "31 de out. de 2024" },
+{ nome: "Outliver: Tribulation", adquirido: "12 de out. de 2024" },
+{ nome: "Empyrion - Galactic Survival", adquirido: "12 de out. de 2024" },
+{ nome: "Honkai: Star Rail", adquirido: "29 de set. de 2024" },
+{ nome: "The Spirit and the Mouse", adquirido: "26 de set. de 2024" },
+{ nome: "The Last Stand: Aftermath", adquirido: "20 de set. de 2024" },
+{ nome: "TOEM", adquirido: "20 de set. de 2024" },
+{ nome: "Wild Card Football", adquirido: "30 de ago. de 2024" },
+{ nome: "Fallout® Classic Collection", adquirido: "30 de ago. de 2024" },
+{ nome: "The Callisto Protocol", adquirido: "23 de ago. de 2024" },
+{ nome: "Gigantic: Rampage Edition", adquirido: "23 de ago. de 2024" },
+{ nome: "Death's Gambit - Afterlife", adquirido: "16 de ago. de 2024" },
+{ nome: "LumbearJack", adquirido: "2 de ago. de 2024" },
+{ nome: "F.I.S.T.: Forged In Shadow Torch", adquirido: "26 de jul. de 2024" },
+{ nome: "Maid of Sker", adquirido: "20 de jul. de 2024" },
+{ nome: "Arcade Paradise", adquirido: "20 de jul. de 2024" },
+{ nome: "The Falconeer: Standard Edition", adquirido: "10 de jul. de 2024" },
+{ nome: "Once Human", adquirido: "10 de jul. de 2024" },
+{ nome: "Redout 2", adquirido: "20 de jun. de 2024" },
+{ nome: "Marvel's Midnight Suns", adquirido: "9 de jun. de 2024" },
+{ nome: "Chivalry 2", adquirido: "5 de jun. de 2024" },
+{ nome: "Farming Simulator 22", adquirido: "24 de mai. de 2024" },
+{ nome: "Dragon Age: Inquisition – Edição Game of the Year", adquirido: "17 de mai. de 2024" },
+{ nome: "Orcs Must Die! 3", adquirido: "7 de mai. de 2024" },
+{ nome: "Cat Quest II", adquirido: "7 de mai. de 2024" },
+{ nome: "LISA: Definitive Edition", adquirido: "28 de abr. de 2024" },
+{ nome: "INDUSTRIA", adquirido: "28 de abr. de 2024" },
+{ nome: "Town of Salem 2", adquirido: "21 de abr. de 2024" },
+{ nome: "The Big Con", adquirido: "21 de abr. de 2024" },
+{ nome: "Thief", adquirido: "7 de abr. de 2024" },
+{ nome: "The Outer Worlds: Spacer's Choice Edition", adquirido: "7 de abr. de 2024" },
+{ nome: "Islets", adquirido: "31 de mar. de 2024" },
+{ nome: "Call of the Wild: The Angler™", adquirido: "24 de mar. de 2024" },
+{ nome: "Invincible Presents: Atom Eve", adquirido: "24 de mar. de 2024" },
+{ nome: "Deus Ex - Mankind Divided", adquirido: "16 de mar. de 2024" },
+{ nome: "The Bridge", adquirido: "16 de mar. de 2024" },
+{ nome: "Super Meat Boy Forever", adquirido: "25 de fev. de 2024" },
+{ nome: "The Suicide of Rachel Foster", adquirido: "18 de fev. de 2024" },
+{ nome: "Dakar Desert Rally", adquirido: "18 de fev. de 2024" },
+{ nome: "Lost Castle", adquirido: "9 de fev. de 2024" },
+{ nome: "Doki Doki Literature Club Plus!", adquirido: "9 de fev. de 2024" },
+{ nome: "Doors - Paradox", adquirido: "7 de fev. de 2024" },
+{ nome: "Infinifactory", adquirido: "31 de jan. de 2024" },
+{ nome: "LOVE", adquirido: "20 de jan. de 2024" },
+{ nome: "Sail Forth", adquirido: "11 de jan. de 2024" },
+{ nome: "Guardiões da Galáxia da Marvel", adquirido: "4 de jan. de 2024" },
+{ nome: "Ghostrunner", adquirido: "1 de jan. de 2024" },
+{ nome: "Human Resource Machine", adquirido: "26 de dez. de 2023" },
+{ nome: "Predecessor", adquirido: "7 de dez. de 2023" },
+{ nome: "GigaBash", adquirido: "7 de dez. de 2023" },
+{ nome: "Mighty Fight Federation", adquirido: "3 de dez. de 2023" },
+{ nome: "Jitsu Squad", adquirido: "3 de dez. de 2023" },
+{ nome: "Surviving the Aftermath", adquirido: "16 de nov. de 2023" },
+{ nome: "EARTHLOCK", adquirido: "16 de nov. de 2023" },
+{ nome: "Turnip Boy Commits Tax Evasion", adquirido: "6 de nov. de 2023" },
+{ nome: "The Evil Within 2", adquirido: "30 de out. de 2023" },
+{ nome: "Tandem: A Tale of Shadows", adquirido: "30 de out. de 2023" },
+{ nome: "The Evil Within", adquirido: "23 de out. de 2023" },
+{ nome: "Eternal Threads", adquirido: "23 de out. de 2023" },
+{ nome: "Q.U.B.E. ULTIMATE BUNDLE", adquirido: "13 de out. de 2023" },
+{ nome: "Godlike Burger", adquirido: "7 de out. de 2023" },
+{ nome: "Soulstice", adquirido: "29 de set. de 2023" },
+{ nome: "Model Builder: Complete Edition", adquirido: "29 de set. de 2023" },
+{ nome: "The Forest Quartet", adquirido: "23 de set. de 2023" },
+{ nome: "Out of Line", adquirido: "23 de set. de 2023" },
+{ nome: "Spelldrifter", adquirido: "7 de set. de 2023" },
+{ nome: "Homeworld: Deserts of Kharak", adquirido: "27 de ago. de 2023" },
+{ nome: "The Elder Scrolls Online", adquirido: "22 de jul. de 2023" },
+{ nome: "Murder by Numbers", adquirido: "22 de jul. de 2023" },
+{ nome: "Train Valley 2", adquirido: "15 de jul. de 2023" },
+{ nome: "GRIME", adquirido: "8 de jul. de 2023" },
+{ nome: "The Dungeon of Naheulbeuk", adquirido: "1 de jul. de 2023" },
+{ nome: "Guacamelee! Super Turbo Championship Edition", adquirido: "17 de jun. de 2023" },
+{ nome: "Guacamelee! 2", adquirido: "17 de jun. de 2023" },
+{ nome: "PAYDAY 2", adquirido: "9 de jun. de 2023" },
+{ nome: "Midnight Ghost Hunt", adquirido: "3 de jun. de 2023" },
+{ nome: "Fallout: New Vegas - Ultimate Edition", adquirido: "26 de mai. de 2023" },
+{ nome: "The Sims™ 4 Bundle Vida em Ousadia", adquirido: "13 de mai. de 2023" },
+{ nome: "Poker Club", adquirido: "30 de abr. de 2023" },
+{ nome: "Breathedge", adquirido: "30 de abr. de 2023" },
+{ nome: "Beyond Blue", adquirido: "21 de abr. de 2023" },
+{ nome: "Second Extinction™", adquirido: "14 de abr. de 2023" },
+{ nome: "MORDHAU", adquirido: "14 de abr. de 2023" },
+{ nome: "shapez", adquirido: "7 de abr. de 2023" },
+{ nome: "Dying Light Enhanced Edition", adquirido: "7 de abr. de 2023" },
+{ nome: "Tunche", adquirido: "1 de abr. de 2023" },
+{ nome: "The Silent Age", adquirido: "1 de abr. de 2023" },
+{ nome: "Chess Ultra", adquirido: "25 de mar. de 2023" },
+{ nome: "Warhammer 40,000: Gladius - Relics of War", adquirido: "19 de mar. de 2023" },
+{ nome: "Call of the Sea", adquirido: "16 de mar. de 2023" },
+{ nome: "Rise of Industry", adquirido: "4 de mar. de 2023" },
+{ nome: "Duskers", adquirido: "25 de fev. de 2023" },
+{ nome: "Warpips", adquirido: "19 de fev. de 2023" },
+{ nome: "Recipe for Disaster", adquirido: "12 de fev. de 2023" },
+{ nome: "Dishonored®: Death of the Outsider™", adquirido: "2 de fev. de 2023" },
+{ nome: "City of Gangsters", adquirido: "2 de fev. de 2023" },
+{ nome: "Hell is Others", adquirido: "27 de jan. de 2023" },
+{ nome: "Adios", adquirido: "27 de jan. de 2023" },
+{ nome: "Epistory - Typing Chronicles", adquirido: "22 de jan. de 2023" },
+{ nome: "Gamedec", adquirido: "13 de jan. de 2023" },
+{ nome: "First Class Trouble", adquirido: "13 de jan. de 2023" },
+{ nome: "Shadow Tactics - Aiko's Choice", adquirido: "7 de jan. de 2023" },
+{ nome: "Kerbal Space Program", adquirido: "7 de jan. de 2023" },
+{ nome: "Eximius: Seize the Frontline", adquirido: "29 de dez. de 2022" },
+{ nome: "Dishonored - Definitive Edition", adquirido: "29 de dez. de 2022" },
+{ nome: "Mortal Shell", adquirido: "28 de dez. de 2022" },
+{ nome: "Severed Steel", adquirido: "27 de dez. de 2022" },
+{ nome: "DEATH STRANDING", adquirido: "25 de dez. de 2022" },
+{ nome: "Wolfenstein: The New Order", adquirido: "20 de dez. de 2022" },
+{ nome: "Costume Quest 2", adquirido: "17 de dez. de 2022" },
+{ nome: "Wildcat Gun Machine", adquirido: "11 de dez. de 2022" },
+{ nome: "Saints Row IV: Re-Elected", adquirido: "11 de dez. de 2022" },
+{ nome: "RPG in a Box", adquirido: "3 de dez. de 2022" },
+{ nome: "Fort Triumph", adquirido: "3 de dez. de 2022" },
+{ nome: "STAR WARS™: Squadrons", adquirido: "24 de nov. de 2022" },
+{ nome: "Evil Dead: The Game", adquirido: "17 de nov. de 2022" },
+{ nome: "Dark Deity", adquirido: "17 de nov. de 2022" },
+{ nome: "Shadow Tactics: Blades of the Shogun", adquirido: "16 de nov. de 2022" },
+{ nome: "Alba - A Wildlife Adventure", adquirido: "13 de nov. de 2022" },
+{ nome: "Filament", adquirido: "7 de nov. de 2022" },
+{ nome: "Warhammer 40,000: Mechanicus - Standard Edition", adquirido: "27 de out. de 2022" },
+{ nome: "Saturnalia", adquirido: "27 de out. de 2022" },
+{ nome: "Fallout 3: Game of the Year Edition", adquirido: "21 de out. de 2022" },
+{ nome: "Evoland Legendary Edition", adquirido: "21 de out. de 2022" },
+{ nome: "ToeJam & Earl: Back in the Groove!", adquirido: "14 de out. de 2022" },
+{ nome: "Darkwood", adquirido: "14 de out. de 2022" },
+{ nome: "Slain: Back From Hell", adquirido: "10 de out. de 2022" },
+{ nome: "Rising Hell", adquirido: "10 de out. de 2022" },
+{ nome: "The Drone Racing League Simulator", adquirido: "30 de set. de 2022" },
+{ nome: "Runbow", adquirido: "30 de set. de 2022" },
+{ nome: "Gloomhaven", adquirido: "23 de set. de 2022" },
+{ nome: "The Captain", adquirido: "20 de set. de 2022" },
+{ nome: "Spirit of the North", adquirido: "20 de set. de 2022" },
+{ nome: "Ancient Enemy", adquirido: "9 de jul. de 2022" },
+{ nome: "Borderlands 3", adquirido: "23 de mai. de 2022" },
+{ nome: "Redout: Enhanced Edition", adquirido: "14 de mai. de 2022" },
+{ nome: "Jotun: Valhalla Edition", adquirido: "14 de mai. de 2022" },
+{ nome: "Terraforming Mars", adquirido: "7 de mai. de 2022" },
+{ nome: "Paradigm", adquirido: "29 de abr. de 2022" },
+{ nome: "Just Die Already", adquirido: "29 de abr. de 2022" },
+{ nome: "Riverbond", adquirido: "24 de abr. de 2022" },
+{ nome: "Amnesia: Rebirth", adquirido: "24 de abr. de 2022" },
+{ nome: "XCOM® 2", adquirido: "15 de abr. de 2022" },
+{ nome: "Insurmountable", adquirido: "15 de abr. de 2022" },
+{ nome: "The Vanishing of Ethan Carter", adquirido: "7 de abr. de 2022" },
+{ nome: "Rogue Legacy", adquirido: "7 de abr. de 2022" },
+{ nome: "Total War: WARHAMMER - Wurrzag", adquirido: "31 de mar. de 2022" },
+{ nome: "Total War: WARHAMMER - Grey Wizard", adquirido: "31 de mar. de 2022" },
+{ nome: "Total War: WARHAMMER - Bretonnia", adquirido: "31 de mar. de 2022" },
+{ nome: "Total War: WARHAMMER - Jade Wizard", adquirido: "31 de mar. de 2022" },
+{ nome: "Total War: WARHAMMER - Isabella von Carstein", adquirido: "31 de mar. de 2022" },
+{ nome: "Total War: WARHAMMER - Grombrindal The White Dwarf", adquirido: "31 de mar. de 2022" },
+{ nome: "Total War: WARHAMMER", adquirido: "31 de mar. de 2022" },
+{ nome: "City of Brass", adquirido: "31 de mar. de 2022" },
+{ nome: "DEMON'S TILT", adquirido: "24 de mar. de 2022" },
+{ nome: "In Sound Mind", adquirido: "19 de mar. de 2022" },
+{ nome: "Kit Épico de Slayer", adquirido: "8 de mar. de 2022" },
+{ nome: "Centipede: Recharged", adquirido: "8 de mar. de 2022" },
+{ nome: "Black Widow: Recharged", adquirido: "8 de mar. de 2022" },
+{ nome: "Cris Tales", adquirido: "2 de mar. de 2022" },
+{ nome: "DAEMON X MACHINA", adquirido: "29 de jan. de 2022" },
+{ nome: "Relicta", adquirido: "23 de jan. de 2022" },
+{ nome: "Galactic Civilizations III", adquirido: "15 de jan. de 2022" },
+{ nome: "Gods Will Fall", adquirido: "6 de jan. de 2022" },
+{ nome: "Tomb Raider GAME OF THE YEAR EDITION", adquirido: "30 de dez. de 2021" },
+{ nome: "Shadow of the Tomb Raider: Definitive Edition", adquirido: "30 de dez. de 2021" },
+{ nome: "Rise of the Tomb Raider: 20 Year Celebration", adquirido: "30 de dez. de 2021" },
+{ nome: "Salt and Sanctuary", adquirido: "29 de dez. de 2021" },
+{ nome: "Moving Out", adquirido: "28 de dez. de 2021" },
+{ nome: "Prey", adquirido: "25 de dez. de 2021" },
+{ nome: "Vampyr", adquirido: "23 de dez. de 2021" },
+{ nome: "Prison Architect", adquirido: "9 de dez. de 2021" },
+{ nome: "Godfall Challenger Edition", adquirido: "9 de dez. de 2021" },
+{ nome: "while True: learn()", adquirido: "5 de dez. de 2021" },
+{ nome: "Dead by Daylight", adquirido: "5 de dez. de 2021" },
+{ nome: "theHunter: Call of the Wild™", adquirido: "27 de nov. de 2021" },
+{ nome: "Never Alone (Kisima Ingitchuna)", adquirido: "18 de nov. de 2021" },
+{ nome: "KID A MNESIA EXHIBITION", adquirido: "18 de nov. de 2021" },
+{ nome: "Guild of Dungeoneering", adquirido: "18 de nov. de 2021" },
+{ nome: "Pacote Epic Temporada Quatro de Rogue Company", adquirido: "11 de nov. de 2021" },
+{ nome: "Tiny Tina's Assault on Dragon Keep: A Wonderlands One-shot Adventure", adquirido: "11 de nov. de 2021" },
+{ nome: "Aven Colony", adquirido: "5 de nov. de 2021" },
+{ nome: "DARQ: Complete Edition", adquirido: "30 de out. de 2021" },
+{ nome: "Among the Sleep - Enhanced Edition", adquirido: "23 de out. de 2021" },
+{ nome: "PC Building Simulator", adquirido: "9 de out. de 2021" },
+{ nome: "Europa Universalis IV: Catholic Majors Unit Pack", adquirido: "30 de set. de 2021" },
+{ nome: "Europa Universalis IV: Evangelical Majors Unit Pack", adquirido: "30 de set. de 2021" },
+{ nome: "Europa Universalis IV: Songs of Yuletide", adquirido: "30 de set. de 2021" },
+{ nome: "Europa Universalis IV", adquirido: "30 de set. de 2021" },
+{ nome: "The Escapists", adquirido: "23 de set. de 2021" },
+{ nome: "Last Day of June", adquirido: "19 de set. de 2021" },
+{ nome: "Tharsis", adquirido: "19 de set. de 2021" },
+{ nome: "Speed Brawl", adquirido: "19 de set. de 2021" },
+{ nome: "Sheltered", adquirido: "13 de set. de 2021" },
+{ nome: "Nioh: The Complete Edition", adquirido: "13 de set. de 2021" },
+{ nome: "Yoku's Island Express", adquirido: "5 de set. de 2021" },
+{ nome: "Automachef", adquirido: "27 de ago. de 2021" },
+{ nome: "Saints Row®: The Third ™ Remastered", adquirido: "27 de ago. de 2021" },
+{ nome: "Yooka-Laylee", adquirido: "22 de ago. de 2021" },
+{ nome: "Void Bastards", adquirido: "22 de ago. de 2021" },
+{ nome: "Rebel Galaxy", adquirido: "13 de ago. de 2021" },
+{ nome: "Train Sim World® 2", adquirido: "29 de jul. de 2021" },
+{ nome: "Mothergunship", adquirido: "29 de jul. de 2021" },
+{ nome: "Primordials: Battle of Gods", adquirido: "27 de jul. de 2021" },
+{ nome: "Verdun", adquirido: "27 de jul. de 2021" },
+{ nome: "Offworld Trading Company", adquirido: "15 de jul. de 2021" },
+{ nome: "Obduction", adquirido: "15 de jul. de 2021" },
+{ nome: "Ironcast", adquirido: "11 de jul. de 2021" },
+{ nome: "Bridge Constructor: The Walking Dead", adquirido: "11 de jul. de 2021" },
+{ nome: "Control", adquirido: "15 de jun. de 2021" },
+{ nome: "Genshin Impact", adquirido: "15 de jun. de 2021" },
+{ nome: "Among Us", adquirido: "29 de mai. de 2021" },
+{ nome: "NBA 2K21", adquirido: "23 de mai. de 2021" },
+{ nome: "The Lion's Song", adquirido: "15 de mai. de 2021" },
+{ nome: "Pine", adquirido: "11 de mai. de 2021" },
+{ nome: "Idle Champions of the Forgotten Realms", adquirido: "6 de mai. de 2021" },
+{ nome: "Hand of Fate 2", adquirido: "23 de abr. de 2021" },
+{ nome: "Tales of the Neon Sea", adquirido: "2 de abr. de 2021" },
+{ nome: "Creature in the Well", adquirido: "30 de mar. de 2021" },
+{ nome: "Wargame: Red Dragon", adquirido: "10 de mar. de 2021" },
+{ nome: "Sunless Sea", adquirido: "28 de fev. de 2021" },
+{ nome: "Metro Last Light Redux", adquirido: "8 de fev. de 2021" },
+{ nome: "Dandara: Trials of Fear Edition", adquirido: "2 de fev. de 2021" },
+{ nome: "STAR WARS™ Battlefront™ II: Celebration Edition", adquirido: "18 de jan. de 2021" },
+{ nome: "Demo de Crying Suns", adquirido: "12 de jan. de 2021" },
+{ nome: "Crying Suns", adquirido: "8 de jan. de 2021" },
+{ nome: "Jurassic World Evolution", adquirido: "2 de jan. de 2021" },
+{ nome: "Night in the Woods", adquirido: "27 de dez. de 2020" },
+{ nome: "My Time At Portia", adquirido: "27 de dez. de 2020" },
+{ nome: "Darkest Dungeon®: The Musketeer", adquirido: "25 de dez. de 2020" },
+{ nome: "Darkest Dungeon®", adquirido: "25 de dez. de 2020" },
+{ nome: "Tropico 5", adquirido: "23 de dez. de 2020" },
+{ nome: "Metro 2033 Redux", adquirido: "22 de dez. de 2020" },
+{ nome: "Alien: Isolation", adquirido: "22 de dez. de 2020" },
+{ nome: "Defense Grid: The Awakening", adquirido: "20 de dez. de 2020" },
+{ nome: "The Long Dark", adquirido: "20 de dez. de 2020" },
+{ nome: "Oddworld: New 'n' Tasty", adquirido: "19 de dez. de 2020" },
+{ nome: "Cities: Skylines", adquirido: "17 de dez. de 2020" },
+{ nome: "Spellbreak", adquirido: "15 de dez. de 2020" },
+{ nome: "Tyranny – Gold Edition", adquirido: "12 de dez. de 2020" },
+{ nome: "Pillars of Eternity - Definitive Edition", adquirido: "12 de dez. de 2020" },
+{ nome: "Blair Witch", adquirido: "31 de out. de 2020" },
+{ nome: "Amnesia: A Machine for Pigs", adquirido: "18 de out. de 2020" },
+{ nome: "Kingdom New Lands", adquirido: "18 de out. de 2020" },
+{ nome: "Rising Storm 2: Vietnam", adquirido: "11 de out. de 2020" },
+{ nome: "ABZU", adquirido: "11 de out. de 2020" },
+{ nome: "Pikuniku", adquirido: "1 de out. de 2020" },
+{ nome: "Free Tough Enough Primary Wrap", adquirido: "1 de out. de 2020" },
+{ nome: "RollerCoaster Tycoon 3 Complete Edition", adquirido: "26 de set. de 2020" },
+{ nome: "Watch Dogs 2", adquirido: "17 de set. de 2020" },
+{ nome: "Railway Empire", adquirido: "11 de set. de 2020" },
+{ nome: "Where The Water Tastes Like Wine", adquirido: "10 de set. de 2020" },
+{ nome: "God's Trigger", adquirido: "21 de ago. de 2020" },
+{ nome: "Enter the Gungeon", adquirido: "21 de ago. de 2020" },
+{ nome: "Coleção Alto", adquirido: "13 de ago. de 2020" },
+{ nome: "Remnant: From the Ashes", adquirido: "13 de ago. de 2020" },
+{ nome: "A Total War Saga: TROY", adquirido: "13 de ago. de 2020" },
+{ nome: "Superbrothers: Sword & Sworcery EP", adquirido: "30 de jul. de 2020" },
+{ nome: "Barony", adquirido: "30 de jul. de 2020" },
+{ nome: "20XX", adquirido: "30 de jul. de 2020" },
+{ nome: "Next Up Hero", adquirido: "24 de jul. de 2020" },
+{ nome: "Tacoma", adquirido: "24 de jul. de 2020" },
+{ nome: "Torchlight II", adquirido: "17 de jul. de 2020" },
+{ nome: "SLUDGE LIFE", adquirido: "14 de jul. de 2020" },
+{ nome: "The Escapists 2", adquirido: "14 de jul. de 2020" },
+{ nome: "Killing Floor 2", adquirido: "14 de jul. de 2020" },
+{ nome: "Lifeless Planet: Edição Premier", adquirido: "10 de jul. de 2020" },
+{ nome: "Hue", adquirido: "3 de jul. de 2020" },
+{ nome: "AER Memories of Old", adquirido: "26 de jun. de 2020" },
+{ nome: "Pathway", adquirido: "23 de jun. de 2020" },
+{ nome: "SAMURAI SHODOWN NEOGEO COLLECTION", adquirido: "17 de jun. de 2020" },
+{ nome: "ARK Valguero", adquirido: "15 de jun. de 2020" },
+{ nome: "ARK Crystal Isles", adquirido: "15 de jun. de 2020" },
+{ nome: "ARK The Center", adquirido: "15 de jun. de 2020" },
+{ nome: "ARK Ragnarok", adquirido: "15 de jun. de 2020" },
+{ nome: "ARK Modkit", adquirido: "15 de jun. de 2020" },
+{ nome: "ARK: Survival Evolved", adquirido: "13 de jun. de 2020" },
+{ nome: "Borderlands: The Handsome Collection", adquirido: "2 de jun. de 2020" },
+{ nome: "Sid Meier's Civilization® VI", adquirido: "23 de mai. de 2020" },
+{ nome: "Grand Theft Auto V: Edição Premium", adquirido: "18 de mai. de 2020" },
+{ nome: "Amnesia: The Dark Descent", adquirido: "1 de mai. de 2020" },
+{ nome: "For The King", adquirido: "28 de abr. de 2020" },
+{ nome: "Just Cause 4 Standard Edition", adquirido: "16 de abr. de 2020" },
+{ nome: "Sherlock Holmes: Crimes and Punishments", adquirido: "10 de abr. de 2020" },
+{ nome: "Close To The Sun", adquirido: "10 de abr. de 2020" },
+{ nome: "Gone Home", adquirido: "2 de abr. de 2020" },
+{ nome: "Hob", adquirido: "2 de abr. de 2020" },
+{ nome: "World War Z", adquirido: "27 de mar. de 2020" },
+{ nome: "Mutazione", adquirido: "15 de mar. de 2020" },
+{ nome: "Anno 1800™ — Semana de teste gratuito", adquirido: "15 de mar. de 2020" },
+{ nome: "Farming Simulator 19", adquirido: "4 de fev. de 2020" },
+{ nome: "Steep Edição Standard", adquirido: "3 de jan. de 2020" },
+{ nome: "Darksiders II Deathinitive Edition", adquirido: "3 de jan. de 2020" },
+{ nome: "Darksiders Warmastered Edition", adquirido: "3 de jan. de 2020" },
+{ nome: "Surviving Mars - Project Laika", adquirido: "30 de dez. de 2019" },
+{ nome: "Surviving Mars - Green Planet", adquirido: "30 de dez. de 2019" },
+{ nome: "The Talos Principle", adquirido: "29 de dez. de 2019" },
+{ nome: "Into the Breach", adquirido: "19 de dez. de 2019" },
+{ nome: "RAYMAN® LEGENDS", adquirido: "1 de dez. de 2019" },
+{ nome: "Bad North", adquirido: "21 de nov. de 2019" },
+{ nome: "The Messenger", adquirido: "18 de nov. de 2019" },
+{ nome: ">observer_", adquirido: "18 de out. de 2019" },
+{ nome: "Surviving Mars - Space Race", adquirido: "10 de out. de 2019" },
+{ nome: "Surviving Mars - Mysteries Resupply Pack", adquirido: "10 de out. de 2019" },
+{ nome: "Surviving Mars", adquirido: "10 de out. de 2019" },
+{ nome: "Lego Batman Trilogy", adquirido: "20 de set. de 2019" },
+{ nome: "Batman Arkham - Trilogy", adquirido: "20 de set. de 2019" },
+        // ... adiciona os teus 400 jogos aqui seguindo este padrão
+    ];
+
+    // 2. LÓGICA DE PERSISTÊNCIA (LocalStorage)
+    // Tenta carregar dados salvos, se não houver, usa a listaOriginal
+    let dadosUsuario = JSON.parse(localStorage.getItem('meusJogosDados')) || {};
+
+    function renderizarTabela() {
+        const corpo = document.getElementById('corpoTabela');
+        corpo.innerHTML = '';
+
+        listaOriginal.forEach((jogo, index) => {
+            const infoSalva = dadosUsuario[index] || { status: 'espera', inicio: '-', fim: '-' };
+            
+            const tr = document.createElement('tr');
+            tr.className = `status-${infoSalva.status}`;
+            
+            tr.innerHTML = `
+                <td><strong>${jogo.nome}</strong></td>
+                <td>${jogo.adquirido}</td>
+                <td>
+                    <select onchange="alterarStatus(${index}, this.value)">
+                        <option value="espera" ${infoSalva.status === 'espera' ? 'selected' : ''}>Uma hora eu jogo</option>
+                        <option value="jogando" ${infoSalva.status === 'jogando' ? 'selected' : ''}>Jogando</option>
+                        <option value="zerado" ${infoSalva.status === 'zerado' ? 'selected' : ''}>Zerado</option>
+                    </select>
+                </td>
+                <td>
+                    <span class="data-info">Início: ${infoSalva.inicio}</span>
+                    <span class="data-info">Zerei: ${infoSalva.fim}</span>
+                </td>
+            `;
+            corpo.appendChild(tr);
+        });
+    }
+
+    // 3. FUNÇÃO PARA ATUALIZAR STATUS E DATAS
+    window.alterarStatus = function(index, novoStatus) {
+        const hoje = new Date().toLocaleDateString('pt-BR');
+        
+        if (!dadosUsuario[index]) dadosUsuario[index] = { status: 'espera', inicio: '-', fim: '-' };
+        
+        dadosUsuario[index].status = novoStatus;
+
+        if (novoStatus === 'jogando' && dadosUsuario[index].inicio === '-') {
+            dadosUsuario[index].inicio = hoje;
+        } else if (novoStatus === 'zerado' && dadosUsuario[index].fim === '-') {
+            dadosUsuario[index].fim = hoje;
+        }
+
+        // Salva no navegador
+        localStorage.setItem('meusJogosDados', JSON.stringify(dadosUsuario));
+        renderizarTabela(); // Atualiza a tela
+    };
+
+    // Iniciar a página
+    renderizarTabela();
+</script>
+
+</body>
+</html>
